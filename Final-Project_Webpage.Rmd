@@ -1,0 +1,154 @@
+---
+title: 'Get to know more about me'
+author: "Sarah V."
+date: "December, 2024"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+library(tidyverse)
+library(rmarkdown)
+library(ggplot2)
+library(readxl)
+```
+
+<style>
+  body{
+  color: #FFFFFF;
+  background-color: #000000;
+  font-family: Adobe Garamond Pro;
+  font-size: 12pt;
+}
+</style>
+
+In addition to being a photographer, I am currently a graduate student pursuing a Professional Science Master's (PSM) in Ecosystem Science and Sustainability. A PSM degree is a terminal Master's degree intended for students who do not wish to get a PhD and want to go straight into the workforce. As such, it does not require a thesis but it does require some sort of additional stepping stone, like an internship or equivalent. Within this graduate program, I am emphasizing in Sustainable Food Systems and Carbon Management tracks, the latter of which I am in the certificate program.
+
+Here's a couple of examples of the kind of work I have been doing for my classes:
+
+### [**Life Cycle Assessment**]{style="color: lightseagreen;"}
+
+One class this semester has been keeping me busy gathering and organizing data results to present to my class. In ESS 555: Life Cycle Assessment for Sustainability, I have been researching the life cycle of wool and acrylic yarn. More specifically, the cradle-to-gate phase for both yarn types, that is, assessing the environmental impacts from raw material extraction up to the gate where the yarn will be sent off to be packaged and transported to stores. A few of the results were expected due to the inherent differences in what each is made of. Wool comes from sheep while acrylic is made from petrochemicals, but you may fooled based on this alone.
+
+As a crocheter (the photo below shows a current hexagon blanket I am working on), I was interested in determining which yarn type has a greater negative environmental impact. Based on greenhouse gases (GHG) alone, wool might be the one to meet that description. The bar chart below shows the main gases emitted by each yarn type for every 100 grams produced during manufacturing. We can overwhelmingly see how little acrylic yarn emits compared to wool.
+
+![A close-up of my in-progress hexagon blanket made of acrylic yarn. 😁](data/yarn_flipped.jpg)
+
+$$\\[0.25in]$$
+
+```{r, include=FALSE}
+TRACI_WA_results <- read_excel("data/ESS555-yarn_LCA_acrylic&wool_TRACI_results.xlsx")
+```
+
+```{r, include=FALSE}
+TRACI_WA_results <- TRACI_WA_results %>% 
+  rename(Emissions_Category = "Emissions Category")
+
+TRACI_WA_results_wider <- TRACI_WA_results %>% 
+  pivot_longer(c("Acrylic", "Wool"),
+                 names_to = "Yarn_Type",
+                 values_to = "Emissions_(kg_CO2e)")
+
+TRACI_WA_results_wider <- TRACI_WA_results_wider %>% 
+  rename(Emissions_kg_CO2e = "Emissions_(kg_CO2e)")
+```
+
+```{r, echo=FALSE, fig.dim = c(12, 10)}
+ggplot(data = TRACI_WA_results_wider) +
+  geom_col(aes(x = Emissions_Category, 
+               y = Emissions_kg_CO2e, 
+               fill = Yarn_Type)) +
+  scale_fill_manual(values = c("gold2", "turquoise4"),
+                    name = "Yarn Type") +
+  coord_flip() +
+  labs(title = "Cradle-to-gate GHG emissions contributions for each yarn type",
+       x = "Emission Type",
+       y = "Emissions (kg of CO2e)",
+       caption = "Emissions are in kilograms of carbon dioxide equivalents. 'Pop.' refers to population. Results obtained from OpenLCA from the 'Ecoinvent v3.4 cutoff unit 20180314' database by Wernet et al. (2016).") +
+       theme(plot.title = element_text(face = "bold", 
+                                       color = "white",
+                                       size = 18),
+             plot.caption = element_text(color = "white",
+                                         size = 8.5),
+             panel.background = element_rect(fill = "black"),
+             plot.background = element_rect(fill = "black"),
+             panel.grid.major = element_line(color = "grey19"),
+             panel.grid.minor = element_line(color = "grey19"),
+             legend.background = element_rect(fill = "black"),
+             legend.title = element_text(color = "white", 
+                                         face = "bold",
+                                         size = 12),
+             legend.text = element_text(color = "white",
+                                        size = 9),
+             axis.title.x = element_text(color = "white", 
+                                         face = "bold",
+                                         size = 12),
+             axis.title.y = element_text(color = "white", 
+                                         face = "bold",
+                                         size = 12),
+             axis.text.x = element_text(color = "white",
+                                        size = 9),
+             axis.text.y = element_text(color = "white",
+                                        size = 9))
+```
+
+$$\\[0.15in]$$
+
+Additionally, the table below provides the total GHG emissions for each yarn type and how they differ when uncertainty is implemented.
+
+#### OpenLCA Total Global Warming Impact (kg of CO2e/100g)
+
+|               |             |                                |
+|:-------------:|:-----------:|:------------------------------:|
+| **Yarn Type** | **OpenLCA** | **OpenLCA with uncertainty\*** |
+|    Acrylic    |   0.30508   |              0.69              |
+|     Wool      |   5.1554    |             5.437              |
+
+: \*The mean from the iterations represents the uncertainty results.
+
+With this table, we can more clearly see the difference. Again, these emissions are generated when the yarn is produced, excluding packaging and onward. Wool might be more GHG-intensive due to a few factors: land requirements, water inputs, and energy use. Land is needed for sheep to graze and live on and for feed production. As a result of market trends, land use change may occur to create spaces for sheep production, releasing GHGs when soils and vegetation are disturbed. Another inherent requirement for wool yarn production is to clean the raw wool before going into other processes. Due to this, lots of water is needed to remove environmental debris, such as leaves and dirt, and the grease left from the sheep's skin. Additionally, to power the washing and cleaning of the raw wool, there are many more mega-joule inputs of energy during the manufacturing phase compared to acrylic yarn since acrylic does not require such a thorough process. So, even though acrylic is made from petrochemicals, it does not have as many GHG-intensive processes to produce its yarn as wool.
+
+This finding was only one portion of a semester-long report, but I thought it was one of the most interesting aspects of it. It is important to mention that even though acrylic seems to generate fewer emissions than wool during its production, this may not be the case for the use and disposal phases, which may contribute significant environmental impacts, so keep that in mind! That said, these results are not to be interpreted as a whole fact. There may be certainty in some aspects, but take the results with a grain of salt because they only provide a bit of insight and satiate curiosity.
+
+### [**R (Programming Language)**]{style="color: lightseagreen;"}
+
+I have also been engaging with R, a programming language. In fact, this page was made using R! Before taking a class on R, I had no knowledge or familiarity with it, so jumping into it wasn't easy, to say the least. However, with time, I found the assignments fun, interesting, and possessing a simple structure in their complex system. It feels like learning a foreign language, such as French or Korean, but I realized it is all about learning and understanding the "grammar." Once you have that, it becomes easier to pinpoint mistakes and establish a flow.
+
+To make the graph on yarn GHGs above, I wrote the code below (with a few additions not shown because it would be too long to include for example's sake) after importing the required data.
+
+```{css, echo=FALSE}
+.background_code {
+  background-color: #171717;
+  border: 1px solid white;
+  color: white;
+  }
+```
+
+```{r, class.source="background_code", eval=FALSE}
+ggplot(data = TRACI_WA_results_wider) +
+  geom_col(aes(x = Emissions_Category, 
+               y = Emissions_kg_CO2e, 
+               fill = Yarn_Type)) +
+  scale_fill_manual(values = c("gold2", "turquoise4"),
+                    name = "Yarn Type") +
+  coord_flip() +
+  labs(title = "GHG emissions contributions for each yarn type",
+       x = "Emission Type",
+       y = "Emissions (kg of CO2e)",
+       caption = "Emissions are in kilograms of carbon dioxide equivalents. Results obtained from OpenLCA from the 'Ecoinvent v3.4 cutoff unit 20180314' database by Wernet et al. (2016).") +
+       theme(plot.title = element_text(face = "bold"))
+```
+
+With its various uses, R can be implemented in nearly any industry or field, if someone is willing to learn it. It's really helpful for demonstrating skills and presenting information in neat documents, online applications, and models. While at the beginning it is difficult to adjust to the coding environment, I hope my interest can inspire some curiosity. :)
+
+$$\\[0.1in]$$
+
+## [**Final Thoughts**]{style="color: lightseagreen;"}
+
+Well, this was a bit of insight into the kind of work I have been up to aside from photography! A completely different side, but still engaging with my interests and advancing my set of skills. As I mentioned on my 'About' page, I hope to mix my passions for photography and sustainability together in future career work. Art and science can uplift each other in facilitating environmental communication and education and the execution of tasks toward making the world a better place one character or photo at a time.
+
+$$\\[1in]$$
+
+### [**References**]{style="color: lightseagreen;"}
+
+Wernet, G., Bauer, C., Steubing, B., Reinhard, J., Moreno-Ruiz, E., & Weidema, B. (2016). The ecoinvent database version 3 (part I): Overview and methodology. *The International Journal of Life Cycle Assessment*, *21*(9), 1218–1230. <http://link.springer.com/10.1007/s11367-016-1087-8> . Accessed December 1, 2024.
